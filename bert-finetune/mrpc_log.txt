@@ -1,0 +1,61 @@
+(bert-finetune) ilham@cds-starter12g4-22:~/hands-on/bert-finetune$ uv run mrpc.py 
+warning: No `requires-python` value found in the workspace. Defaulting to `>=3.12`.
+Loading weights: 100%|█████████████████████| 199/199 [00:00<00:00, 1994.36it/s, Materializing param=bert.pooler.dense.weight]
+BertForSequenceClassification LOAD REPORT from: bert-base-uncased
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED    :can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING       :those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+{'loss': '0.6307', 'grad_norm': '5.542', 'learning_rate': '4.211e-05', 'epoch': '0.5263'}                                    
+{'eval_loss': '0.6992', 'eval_accuracy': '0.4', 'eval_f1': '0.25', 'eval_runtime': '10.03', 'eval_samples_per_second': '1.994', 'eval_steps_per_second': '0.299', 'epoch': '1'}                                                                           
+Writing model shards: 100%|████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.11it/s]
+{'loss': '0.6592', 'grad_norm': '6.625', 'learning_rate': '3.333e-05', 'epoch': '1.053'}                                     
+ 44%|██████████████████████████████████████▌                                                 | 25/57 [09:31<11:55, 22.35s/it]
+
+
+{'loss': '0.5915', 'grad_norm': '7.164', 'learning_rate': '2.456e-05', 'epoch': '1.579'}                                     
+{'eval_loss': '0.6325', 'eval_accuracy': '0.7', 'eval_f1': '0.8', 'eval_runtime': '10.48', 'eval_samples_per_second': '1.909', 'eval_steps_per_second': '0.286', 'epoch': '2'}                                                                            
+Writing model shards: 100%|████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  2.15it/s]
+{'loss': '0.4833', 'grad_norm': '5.484', 'learning_rate': '1.579e-05', 'epoch': '2.105'}                                     
+{'loss': '0.4303', 'grad_norm': '6.759', 'learning_rate': '7.018e-06', 'epoch': '2.632'}                                     
+{'eval_loss': '0.6831', 'eval_accuracy': '0.65', 'eval_f1': '0.72', 'eval_runtime': '10.04', 'eval_samples_per_second': '1.993', 'eval_steps_per_second': '0.299', 'epoch': '3'}                                                                          
+Writing model shards: 100%|████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  1.88it/s]
+There were missing keys in the checkpoint model loaded: ['bert.embeddings.LayerNorm.weight', 'bert.embeddings.LayerNorm.bias', 'bert.encoder.layer.0.attention.output.LayerNorm.weight', 'bert.encoder.layer.0.attention.output.LayerNorm.bias', 'bert.encoder.layer.0.output.LayerNorm.weight', 'bert.encoder.layer.0.output.LayerNorm.bias', 'bert.encoder.layer.1.attention.output.LayerNorm.weight', 'bert.encoder.layer.1.attention.output.LayerNorm.bias', 'bert.encoder.layer.1.output.LayerNorm.weight', 'bert.encoder.layer.1.output.LayerNorm.bias', 'bert.encoder.layer.2.attention.output.LayerNorm.weight', 'bert.encoder.layer.2.attention.output.LayerNorm.bias', 'bert.encoder.layer.2.output.LayerNorm.weight', 'bert.encoder.layer.2.output.LayerNorm.bias', 'bert.encoder.layer.3.attention.output.LayerNorm.weight', 'bert.encoder.layer.3.attention.output.LayerNorm.bias', 'bert.encoder.layer.3.output.LayerNorm.weight', 'bert.encoder.layer.3.output.LayerNorm.bias', 'bert.encoder.layer.4.attention.output.LayerNorm.weight', 'bert.encoder.layer.4.attention.output.LayerNorm.bias', 'bert.encoder.layer.4.output.LayerNorm.weight', 'bert.encoder.layer.4.output.LayerNorm.bias', 'bert.encoder.layer.5.attention.output.LayerNorm.weight', 'bert.encoder.layer.5.attention.output.LayerNorm.bias', 'bert.encoder.layer.5.output.LayerNorm.weight', 'bert.encoder.layer.5.output.LayerNorm.bias', 'bert.encoder.layer.6.attention.output.LayerNorm.weight', 'bert.encoder.layer.6.attention.output.LayerNorm.bias', 'bert.encoder.layer.6.output.LayerNorm.weight', 'bert.encoder.layer.6.output.LayerNorm.bias', 'bert.encoder.layer.7.attention.output.LayerNorm.weight', 'bert.encoder.layer.7.attention.output.LayerNorm.bias', 'bert.encoder.layer.7.output.LayerNorm.weight', 'bert.encoder.layer.7.output.LayerNorm.bias', 'bert.encoder.layer.8.attention.output.LayerNorm.weight', 'bert.encoder.layer.8.attention.output.LayerNorm.bias', 'bert.encoder.layer.8.output.LayerNorm.weight', 'bert.encoder.layer.8.output.LayerNorm.bias', 'bert.encoder.layer.9.attention.output.LayerNorm.weight', 'bert.encoder.layer.9.attention.output.LayerNorm.bias', 'bert.encoder.layer.9.output.LayerNorm.weight', 'bert.encoder.layer.9.output.LayerNorm.bias', 'bert.encoder.layer.10.attention.output.LayerNorm.weight', 'bert.encoder.layer.10.attention.output.LayerNorm.bias', 'bert.encoder.layer.10.output.LayerNorm.weight', 'bert.encoder.layer.10.output.LayerNorm.bias', 'bert.encoder.layer.11.attention.output.LayerNorm.weight', 'bert.encoder.layer.11.attention.output.LayerNorm.bias', 'bert.encoder.layer.11.output.LayerNorm.weight', 'bert.encoder.layer.11.output.LayerNorm.bias'].
+There were unexpected keys in the checkpoint model loaded: ['bert.embeddings.LayerNorm.beta', 'bert.embeddings.LayerNorm.gamma', 'bert.encoder.layer.0.attention.output.LayerNorm.beta', 'bert.encoder.layer.0.attention.output.LayerNorm.gamma', 'bert.encoder.layer.0.output.LayerNorm.beta', 'bert.encoder.layer.0.output.LayerNorm.gamma', 'bert.encoder.layer.1.attention.output.LayerNorm.beta', 'bert.encoder.layer.1.attention.output.LayerNorm.gamma', 'bert.encoder.layer.1.output.LayerNorm.beta', 'bert.encoder.layer.1.output.LayerNorm.gamma', 'bert.encoder.layer.2.attention.output.LayerNorm.beta', 'bert.encoder.layer.2.attention.output.LayerNorm.gamma', 'bert.encoder.layer.2.output.LayerNorm.beta', 'bert.encoder.layer.2.output.LayerNorm.gamma', 'bert.encoder.layer.3.attention.output.LayerNorm.beta', 'bert.encoder.layer.3.attention.output.LayerNorm.gamma', 'bert.encoder.layer.3.output.LayerNorm.beta', 'bert.encoder.layer.3.output.LayerNorm.gamma', 'bert.encoder.layer.4.attention.output.LayerNorm.beta', 'bert.encoder.layer.4.attention.output.LayerNorm.gamma', 'bert.encoder.layer.4.output.LayerNorm.beta', 'bert.encoder.layer.4.output.LayerNorm.gamma', 'bert.encoder.layer.5.attention.output.LayerNorm.beta', 'bert.encoder.layer.5.attention.output.LayerNorm.gamma', 'bert.encoder.layer.5.output.LayerNorm.beta', 'bert.encoder.layer.5.output.LayerNorm.gamma', 'bert.encoder.layer.6.attention.output.LayerNorm.beta', 'bert.encoder.layer.6.attention.output.LayerNorm.gamma', 'bert.encoder.layer.6.output.LayerNorm.beta', 'bert.encoder.layer.6.output.LayerNorm.gamma', 'bert.encoder.layer.7.attention.output.LayerNorm.beta', 'bert.encoder.layer.7.attention.output.LayerNorm.gamma', 'bert.encoder.layer.7.output.LayerNorm.beta', 'bert.encoder.layer.7.output.LayerNorm.gamma', 'bert.encoder.layer.8.attention.output.LayerNorm.beta', 'bert.encoder.layer.8.attention.output.LayerNorm.gamma', 'bert.encoder.layer.8.output.LayerNorm.beta', 'bert.encoder.layer.8.output.LayerNorm.gamma', 'bert.encoder.layer.9.attention.output.LayerNorm.beta', 'bert.encoder.layer.9.attention.output.LayerNorm.gamma', 'bert.encoder.layer.9.output.LayerNorm.beta', 'bert.encoder.layer.9.output.LayerNorm.gamma', 'bert.encoder.layer.10.attention.output.LayerNorm.beta', 'bert.encoder.layer.10.attention.output.LayerNorm.gamma', 'bert.encoder.layer.10.output.LayerNorm.beta', 'bert.encoder.layer.10.output.LayerNorm.gamma', 'bert.encoder.layer.11.attention.output.LayerNorm.beta', 'bert.encoder.layer.11.attention.output.LayerNorm.gamma', 'bert.encoder.layer.11.output.LayerNorm.beta', 'bert.encoder.layer.11.output.LayerNorm.gamma'].
+{'train_runtime': '1294', 'train_samples_per_second': '0.348', 'train_steps_per_second': '0.044', 'train_loss': '0.5347', 'epoch': '3'}
+100%|████████████████████████████████████████████████████████████████████████████████████████| 57/57 [21:33<00:00, 22.70s/it]
+100%|██████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:05<00:00,  2.00s/it]
+
+Final Evaluation Results: {'eval_loss': 0.6325742602348328, 'eval_accuracy': 0.75, 'eval_f1': 0.8275862068965517, 'eval_runtime': 10.1119, 'eval_samples_per_second': 1.978, 'eval_steps_per_second': 0.297, 'epoch': 3.0}
+
+
+
+
+
+
+
+------------
+
+Summary:
+RAM usage: 7.5 GB
+Training time: 1294 seconds = 21.56 minutes
+
+Metrics (per epoch):
+| Epoch | F1    | Accuracy  |
+| ---   | ---   | ---       |
+| 1     | 0.25  | 0.4       |
+| 2     | 0.8   | 0.7       |
+| 3     | 0.65  | 0.72      |
+| Final | 0.827 | 0.75      |
+  
