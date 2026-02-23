@@ -10,6 +10,10 @@ raw_dataset = load_dataset("nyu-mll/glue", "mrpc")
 model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased")
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
 
+# total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+# print(
+#     f"Total trainable parameters in {model.config._name_or_path}: {total_params}")
+
 
 def encode(examples):
     return tokenizer(examples["sentence1"], examples["sentence2"], truncation=True, padding="max_length")
