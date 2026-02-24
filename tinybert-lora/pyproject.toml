@@ -1,0 +1,15 @@
+[project]
+name = "tinybert-lora"
+version = "1.0.0"
+description = "PEFT LoRA with TinyBERT"
+license = "Apache-2.0"
+dependencies = [
+    "datasets>=4.5.0",
+    "evaluate>=0.4.6",
+    "numpy>=2.4.2",
+    "pandas>=3.0.1",
+    "peft>=0.18.1",
+    "scikit-learn>=1.8.0",
+    "torch>=2.10.0",
+    "transformers[torch]>=5.2.0",
+]
