@@ -14,6 +14,7 @@ project_root = os.path.dirname(os.path.dirname(current_file_path))
 if project_root not in sys.path:
     sys.path.append(project_root)
 from common.resource_monitor import ResourceMonitor
+from common.trainer_callback import EpochTimerCallback
 
 torch.set_num_threads(1)
 
@@ -35,11 +36,12 @@ dataset = dataset.map(
 
 # Stratified sampling to ensure balanced classes in train and eval subsets
 train_split = dataset["train"].train_test_split(
-    test_size=1000, stratify_by_column="label", seed=42)
+    test_size=200, stratify_by_column="label", seed=42)
 train_subset = train_split["test"]
 eval_split = dataset["validation"].train_test_split(
-    test_size=200, stratify_by_column="label", seed=42)
+    test_size=50, stratify_by_column="label", seed=42)
 eval_subset = eval_split["test"]
+# eval_subset = dataset["validation"]
 
 
 lora_config = LoraConfig(
@@ -70,10 +72,11 @@ def compute_metrics(eval_pred):
 
 
 training_args = TrainingArguments(
-    output_dir="./lora_sst2_checkpoints-10ktrain_1kval",
+    output_dir="./lora_sst2_checkpoints",
     eval_strategy="epoch",
+    eval_on_start=True,
     save_strategy="epoch",
-    num_train_epochs=3,
+    num_train_epochs=20,
     per_device_train_batch_size=32,
     per_device_eval_batch_size=32,
     learning_rate=5e-4,
@@ -93,7 +96,8 @@ trainer = Trainer(
     train_dataset=train_subset,
     eval_dataset=eval_subset,
     compute_metrics=compute_metrics,
-    data_collator=data_collator
+    data_collator=data_collator,
+    callbacks=[EpochTimerCallback()]
 )
 
 # Start Trainings
