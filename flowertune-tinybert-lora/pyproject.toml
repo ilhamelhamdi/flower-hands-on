@@ -62,11 +62,3 @@ num-server-rounds = 15
 num-supernodes = 50
 wandb.project = "flowertune-tinybert-lora"
 wandb.entity = "ilham-abdillah-alhamdi-universitas-indonesia"
-
-[superlink]
-default = "local"
-
-[superlink.local]
-options.num-supernodes = 50
-options.backend.client-resources.num-cpus = 1
-options.backend.client-resources.num-gpus = 0.0
