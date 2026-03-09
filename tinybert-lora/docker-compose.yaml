@@ -1,0 +1,13 @@
+services:
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ilhamelhamdi/peft-lora-tinybert:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

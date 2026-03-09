@@ -50,19 +50,19 @@ run_name = "tinybert-lora-run"
 name = "glue"
 subset = "sst2"
 text_fields = ["sentence"]
-train_size = 2000          # Set to null to use full dataset
-val_size = 200             # Set to null to use full dataset
+# train_size = 2000          # Commented out to use full dataset
+# val_size = 200             # Commented out to use full dataset
 
 [tool.training.datasets.qnli]
 name = "glue"
 subset = "qnli"
 text_fields = ["question", "sentence"]
-train_size = 2000
-val_size = 200
+# train_size = 2000
+# val_size = 200
 
 [tool.training.datasets.qqp]
 name = "glue"
 subset = "qqp"
 text_fields = ["question1", "question2"]
-train_size = 2000
-val_size = 200
+# train_size = 2000
+# val_size = 200
