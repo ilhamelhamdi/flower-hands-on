@@ -9,7 +9,7 @@ FDS = None  # Cache FederatedDataset
 
 def encoding_func(examples, tokenizer):
     # Encoding for QNLI
-    return tokenizer(examples["question"], examples["sentence"], truncation=True)
+    return tokenizer(examples["question"], examples["sentence"], truncation=True, max_length=512)
 
 
 def get_encoding_func_and_data_collator(model_name: str):
@@ -39,15 +39,12 @@ def load_data(partition_id: int, num_partitions: int, dataset_name: str, dataset
 
 
 accuracy_metric = evaluate.load("accuracy")
-f1_metric = evaluate.load("f1")
 
 
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)
     acc = accuracy_metric.compute(predictions=predictions, references=labels)
-    f1 = f1_metric.compute(predictions=predictions, references=labels)
     return {
         "accuracy": acc["accuracy"],
-        "f1": f1["f1"]
     }

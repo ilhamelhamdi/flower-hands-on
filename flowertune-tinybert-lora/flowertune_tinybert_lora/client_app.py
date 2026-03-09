@@ -60,6 +60,7 @@ def train(msg: Message, context: Context):
 
     training_arguments.learning_rate = new_lr
     training_arguments.output_dir = msg.content["config"]["save_path"]
+    training_arguments.report_to = "none"
 
     trainer = Trainer(
         model=model,

@@ -72,7 +72,7 @@ def get_validation_set_and_data_collator(cfg):
         cfg.dataset.name, cfg.dataset.subset, split="validation")
     encoding_func, data_collator = get_encoding_func_and_data_collator(
         cfg.model.name)
-    val_set = raw_val_set.map(encoding_func, batched=True)
+    val_set = raw_val_set.map(encoding_func, batched=True, num_proc=8)
     return val_set, data_collator
 
 
@@ -91,10 +91,14 @@ def get_evaluate_fn(cfg, validation_set, data_collator, save_path):
             model.save_pretrained(f"{save_path}/peft_{server_round}")
 
         # Evaluate model on validation set
+        trainer_args = TrainingArguments(
+            output_dir=f"{save_path}/eval",
+            per_device_eval_batch_size=128,
+            dataloader_num_workers=8,
+        )
         trainer = Trainer(
             model=model,
-            args=TrainingArguments(
-                output_dir=f"{save_path}/eval", per_device_eval_batch_size=32),
+            args=trainer_args,
             eval_dataset=validation_set,
             compute_metrics=compute_metrics,
             data_collator=data_collator,
@@ -106,7 +110,6 @@ def get_evaluate_fn(cfg, validation_set, data_collator, save_path):
                 "server_round": server_round,
                 "eval_loss": metrics["eval_loss"],
                 "eval_accuracy": metrics["eval_accuracy"],
-                "eval_f1": metrics["eval_f1"],
             }
         )
 
