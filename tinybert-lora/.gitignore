@@ -165,3 +165,7 @@ cython_debug/
 
 # Model Checkpoints
 *checkpoint*/
+results/
+
+# Wandb
+wandb/
