@@ -31,7 +31,7 @@ mkdir -p results/logs
 # We use 'bash -c' to run multiple commands inside the container
 singularity exec --nv \
     --bind ${PROJECT_ROOT}:/root \
-    --env WANDB_API_KEY=$WANDB_API_KEY \
+    --env WANDB_API_KEY=$(grep WANDB_API_KEY .env | cut -d '=' -f2)
     --pwd /root \
     docker://$IMAGE_NAME \
     bash -c "
