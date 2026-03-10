@@ -1,13 +1,17 @@
 services:
-  train:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  trainer:
+    build: .
     image: ilhamelhamdi/peft-lora-tinybert:latest
+    container_name: tinybert_trainer
+    volumes:
+      - .:/root
+    env_file:
+      - .env
     deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+      # resources:
+      #   reservations:
+      #     devices:
+      #       - driver: nvidia
+      #         count: 1
+      #         capabilities: [gpu]
+    command: python -m tinybert_lora.train sst2 args.run_name="local-docker-compose"
