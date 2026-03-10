@@ -11,7 +11,9 @@
 
 #  Load the key from local environment
 if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
+    set -a            # Mark all variables for export
+    source .env       # Read the file
+    set +a            # Turn off auto-export
 fi
 
 # Variables
