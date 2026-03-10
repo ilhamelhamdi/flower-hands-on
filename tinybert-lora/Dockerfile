@@ -16,13 +16,13 @@ RUN pip install --no-cache-dir uv
 COPY pyproject.toml uv.lock ./
 
 # Install dependencies
-RUN uv pip install --system -r pyproject.toml
+RUN uv pip install --system --no-cache -r pyproject.toml
 
 # Copy the rest of the application code
 COPY . .
 
 # Ensure the project is installed in editable mode inside the container
-RUN uv pip install --system -e .
+RUN uv pip install --system --no-cache -e .
 
 # Set the default command (can be overridden by Singularity/Slurm)
 CMD ["python", "-m", "tinybert_lora.train", "sst2"]
