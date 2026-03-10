@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.2.1-cuda12.1-cudnn8-runtime
+FROM pytorch/pytorch:2.10.0-cuda13.0-cudnn9-runtime
 
 # Set environment variables for non-interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
@@ -10,9 +10,7 @@ ENV PIP_BREAK_SYSTEM_PACKAGES=1
 WORKDIR /root
 
 # Install uv (fast Python package manager)
-ADD https://astral.sh/uv/install.sh /install.sh
-RUN chmod +x /install.sh && /install.sh && rm /install.sh
-ENV PATH="/root/.cargo/bin:$PATH"
+RUN pip install --no-cache-dir uv
 
 # Copy configuration and lock files first to leverage Docker cache
 COPY pyproject.toml uv.lock ./
