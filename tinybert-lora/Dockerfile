@@ -1,8 +1,10 @@
-FROM nvcr.io/nvidia/pytorch:26.02-py3
+FROM pytorch/pytorch:2.2.1-cuda12.1-cudnn8-runtime
 
 # Set environment variables for non-interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
+ENV UV_BREAK_SYSTEM_PACKAGES=1
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
 # Set working directory inside the container
 WORKDIR /root

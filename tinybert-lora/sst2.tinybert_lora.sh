@@ -14,8 +14,8 @@ if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
 fi
 
-# Use the official NVIDIA image directly
-IMAGE_NAME=nvcr.io/nvidia/pytorch:26.02-py3
+# Variables
+IMAGE_NAME=pytorch/pytorch:2.10.0-cuda13.0-cudnn9-runtime
 PROJECT_ROOT=$(pwd)             
 
 # Create directory for Singularity cache to avoid disk quota issues
@@ -32,6 +32,7 @@ mkdir -p results/logs
 singularity exec --nv \
     --bind ${PROJECT_ROOT}:/root \
     --env WANDB_API_KEY=$WANDB_API_KEY \
+    --env UV_BREAK_SYSTEM_PACKAGES=1 \
     --pwd /root \
     docker://$IMAGE_NAME \
     bash -c "
@@ -39,6 +40,5 @@ singularity exec --nv \
         uv pip install --system -r pyproject.toml && \
         uv pip install --system -e . && \
         python -m tinybert_lora.train sst2 \
-            args.run_name='dgx-run' \
-            args.num_train_epochs=20
+            args.run_name='dgx-run'
     "
