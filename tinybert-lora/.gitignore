@@ -169,3 +169,7 @@ results/
 
 # Wandb
 wandb/
+
+
+# Singulrity build
+*.sif
