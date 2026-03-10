@@ -1,0 +1,17 @@
+services:
+  trainer:
+    build: .
+    image: ilhamelhamdi/peft-lora-modernbert:latest
+    container_name: modernbert_trainer
+    volumes:
+      - .:/root
+    env_file:
+      - .env
+    deploy:
+      # resources:
+      #   reservations:
+      #     devices:
+      #       - driver: nvidia
+      #         count: 1
+      #         capabilities: [gpu]
+    command: python -m modernbert_lora.train sst2 args.run_name="local-docker-compose"

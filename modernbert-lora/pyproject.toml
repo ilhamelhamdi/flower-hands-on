@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "modernbert-lora"
+version = "1.0.1"
+description = "PEFT LoRA with ModernBERT"
+license = "Apache-2.0"
+dependencies = [
+    "datasets>=4.5.0",
+    "evaluate>=0.4.6",
+    "numpy>=2.4.2",
+    "pandas>=3.0.1",
+    "peft>=0.18.1",
+    "scikit-learn>=1.8.0",
+    "torch>=2.10.0",
+    "transformers[torch]>=5.2.0",
+    "omegaconf>=2.3.0",
+    "wandb>=0.25.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["modernbert_lora", "common"]
+
+[tool.training]
+model_id = "answerdotai/ModernBERT-base"
+
+[tool.training.wandb]
+project = "modernbert-lora-centralized"
+entity = "ilham-abdillah-alhamdi-universitas-indonesia"
+
+[tool.training.lora]
+r = 8
+lora_alpha = 32
+lora_dropout = 0.1
+target_modules = ["Wqkv", "out_proj"]
+
+[tool.training.args]
+num_train_epochs = 20
+per_device_train_batch_size = 64
+per_device_eval_batch_size = 64
+learning_rate = 5e-4
+weight_decay = 0.01
+logging_steps = 10
+report_to = "wandb"
+run_name = "modernbert-lora-run"
+
+[tool.training.datasets.sst2]
+name = "glue"
+subset = "sst2"
+text_fields = ["sentence"]
+# train_size = 2000          # Commented out to use full dataset
+# val_size = 200             # Commented out to use full dataset
+
+[tool.training.datasets.qnli]
+name = "glue"
+subset = "qnli"
+text_fields = ["question", "sentence"]
+# train_size = 2000
+# val_size = 200
+
+[tool.training.datasets.qqp]
+name = "glue"
+subset = "qqp"
+text_fields = ["question1", "question2"]
+# train_size = 2000
+# val_size = 200
