@@ -32,13 +32,12 @@ mkdir -p results/logs
 singularity exec --nv \
     --bind ${PROJECT_ROOT}:/root \
     --env WANDB_API_KEY=$WANDB_API_KEY \
-    --env UV_BREAK_SYSTEM_PACKAGES=1 \
     --pwd /root \
     docker://$IMAGE_NAME \
     bash -c "
-        pip install uv && \
-        uv pip install --system -r pyproject.toml && \
-        uv pip install --system -e . && \
+        pip install uv --break-system-packages && \
+        uv pip install --system --break-system-packages -r pyproject.toml && \
+        uv pip install --system --break-system-packages -e . && \
         python -m tinybert_lora.train sst2 \
             args.run_name='dgx-run'
     "
