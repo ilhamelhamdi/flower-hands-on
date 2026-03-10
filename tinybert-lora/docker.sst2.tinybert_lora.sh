@@ -31,7 +31,7 @@ mkdir -p results/logs
 # --bind: Mount your current folder so the code and results are visible
 singularity exec --nv \
     --bind ${PROJECT_ROOT}:/root \
-    --env WANDB_API_KEY=$WANDB_API_KEY \
+    --env WANDB_API_KEY=$(grep WANDB_API_KEY .env | cut -d '=' -f2) \
     --pwd /root \
     docker://$IMAGE_NAME \
     python -m tinybert_lora.train sst2 \
