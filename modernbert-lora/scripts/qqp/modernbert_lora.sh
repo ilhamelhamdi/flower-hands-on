@@ -26,21 +26,23 @@ export SINGULARITY_TMPDIR=$HOME/temp
 mkdir -p $SINGULARITY_TMPDIR
 mkdir -p results/logs
 
+export SINGULARITYENV_PYTHONNOUSERSITE=1
+
 # Run the training
 # We use 'exec' instead of 'instance start' for batch training scripts
 # --nv: Enable GPU
-# --writable: Enable writable container
 # --bind: Mount your current folder so the code and results are visible
 # 3. Execute setup and training in one block
 # We use 'bash -c' to run multiple commands inside the container
-singularity exec --nv --writable \
+singularity exec --nv \
     --bind ${PROJECT_ROOT}:/root \
     --env WANDB_API_KEY=$WANDB_API_KEY \
     --pwd /root \
     $SIF_PATH \
     bash -c "
-        pip install uv && \
-        uv sync && \
+        chmod +x ./setup-env.sh && ./setup-env.sh && \
+        
+        source .venv/bin/activate && \
         python -m modernbert_lora.train qqp \
             args.run_name='dgx-run'
     "
