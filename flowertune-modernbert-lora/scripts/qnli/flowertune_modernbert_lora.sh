@@ -43,6 +43,6 @@ singularity exec --nv \
 
         echo "Starting training..." && \
         flwr run . \
-            --run-config 'dataset="qnli"' \
-            --run-config 'wandb.run-name="dgx-run"'
+            --run-config 'dataset=\"qnli\"' \
+            --run-config 'wandb.run-name=\"dgx-run\"'
     "
