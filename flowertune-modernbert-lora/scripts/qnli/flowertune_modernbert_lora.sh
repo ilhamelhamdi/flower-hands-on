@@ -17,7 +17,7 @@ if [ -f .env ]; then
 fi
 
 # Variables
-SIF_PATH=~/singularity_images/pytorch_2.10.0.sif
+SIF_PATH=/srv/images/python_3.12.9.sif
 PROJECT_ROOT=$(pwd)             
 
 # Create directory for Singularity cache to avoid disk quota issues
