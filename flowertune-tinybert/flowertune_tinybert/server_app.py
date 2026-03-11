@@ -95,8 +95,7 @@ def get_evaluate_fn(cfg, validation_set, data_collator, save_path):
         # Evaluate model on validation set
         trainer_args = TrainingArguments(
             output_dir=f"{save_path}/eval",
-            per_device_eval_batch_size=128,
-            dataloader_num_workers=8,
+            per_device_eval_batch_size=cfg.eval.batch_size,
         )
         trainer = Trainer(
             model=model,
