@@ -21,7 +21,7 @@ export SINGULARITY_TMPDIR=$HOME/temp
 mkdir -p $SINGULARITY_TMPDIR
 mkdir -p results/logs
 
-singularity instance start --nv -f \
+singularity instance start --nv \
     --bind ${PROJECT_ROOT}:/root \
     --env-file .env \
     $SIF_PATH \
