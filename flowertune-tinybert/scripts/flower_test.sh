@@ -10,12 +10,6 @@
 #SBATCH --mail-type=ALL
 #SBATCH --time=00:10:00
 
-#  Load the key from local environment
-if [ -f .env ]; then
-    set -a            # Mark all variables for export
-    source .env       # Read the file
-    set +a            # Turn off auto-export
-fi
 
 # Variables
 SIF_PATH=/srv/images/python_3.12.9.sif
@@ -29,8 +23,7 @@ mkdir -p results/logs
 
 singularity instance start --nv -f \
     --bind ${PROJECT_ROOT}:/root \
-    --env WANDB_API_KEY=$WANDB_API_KEY \
-    --pwd /root \
+    --env-file .env \
     $SIF_PATH \
     $INSTANCE_NAME
 
