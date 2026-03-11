@@ -4,9 +4,9 @@
 echo "Setting up the environment..."
 
 echo "Installing uv..."
-export PYTHONUSERBASE=$(pwd)/.local
+# export PYTHONUSERBASE=$(pwd)/.local   
 pip install --user uv --break-system-packages
-export PATH=$PATH:$(pwd)/.local/bin
+# export PATH=$PATH:$(pwd)/.local/bin
 
 if [ -d ".venv" ]; then
     rm -rf .venv

@@ -28,14 +28,14 @@ singularity instance start --nv \
     $INSTANCE_NAME
 
 
-singularity exec --nv \
-    --cwd /root \
-    instance://$INSTANCE_NAME \
-    bash -c "
-        chmod +x ./setup-env.sh && ./setup-env.sh && \
+# singularity exec --nv \
+#     --cwd /root \
+#     instance://$INSTANCE_NAME \
+#     bash -c "
+#         chmod +x ./setup-env.sh && ./setup-env.sh && \
 
-        flwr config list
-    "
+#         flwr config list
+#     "
 
 # Keeps the job alive until it reaches the time limit
 # while true; do sleep 1; done
