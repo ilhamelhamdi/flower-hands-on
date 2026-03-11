@@ -37,7 +37,7 @@ clientapp = "flowertune_modernbert_lora.client_app:app"
 [tool.flwr.app.config]
 dataset = "sst2" # Default dataset, can be overridden in CLI
 model.name = "answerdotai/ModernBERT-base"
-model.quantization = 8
+# model.quantization = 8
 model.gradient-checkpointing = false
 model.lora.peft-lora-r = 8
 model.lora.peft-lora-alpha = 16
