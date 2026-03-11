@@ -32,33 +32,17 @@ def get_model(model_cfg: DictConfig):
     https://github.com/huggingface/peft/blob/main/examples/fp4_finetuning/finetune_fp4_opt_bnb_peft.py
     """
 
-    # Quantization is not supported in TinyBERT
-    quantization_config = None
-    # if model_cfg.quantization == 4:
-    #     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
-    # elif model_cfg.quantization == 8:
-    #     quantization_config = BitsAndBytesConfig(load_in_8bit=True)
-    # else:
-    #     raise ValueError(
-    #         f"Use 4-bit or 8-bit quantization. You passed: {model_cfg.quantization}/"
-    #     )
-
     model = AutoModelForSequenceClassification.from_pretrained(
         model_cfg.name,
-        quantization_config=quantization_config,
         torch_dtype=torch.float32,
     )
 
-    # Gradient checkpointing is overkill
-    # model = prepare_model_for_kbit_training(
-    #     model, use_gradient_checkpointing=model_cfg.gradient_checkpointing
-    # )
-
     peft_config = LoraConfig(
+        task_type=TaskType.SEQ_CLS,
         r=model_cfg.lora.peft_lora_r,
         lora_alpha=model_cfg.lora.peft_lora_alpha,
-        lora_dropout=0.075,
-        task_type=TaskType.SEQ_CLS,
+        lora_dropout=model_cfg.lora.peft_lora_dropout,
+        target_modules=model_cfg.lora.peft_target_modules.split(","),
     )
 
     return get_peft_model(model, peft_config)

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "flowertune-tinybert-lora"
+name = "flowertune-tinybert"
 version = "1.0.0"
 description = "FlowerTune TinyBERT LoRA: Federated TinyBERT LoRA Fine-tuning with Flower"
 license = "Apache-2.0"
@@ -31,17 +31,16 @@ packages = ["."]
 publisher = "flwrlabs"
 
 [tool.flwr.app.components]
-serverapp = "flowertune_tinybert_lora.server_app:app"
-clientapp = "flowertune_tinybert_lora.client_app:app"
+serverapp = "flowertune_tinybert.server_app:app"
+clientapp = "flowertune_tinybert.client_app:app"
 
 [tool.flwr.app.config]
-dataset.name = "nyu-mll/glue"
-dataset.subset = "qnli"
+dataset = "sst2"
 model.name = "huawei-noah/TinyBERT_General_4L_312D"
-model.quantization = 8
-model.gradient-checkpointing = false
 model.lora.peft-lora-r = 8
 model.lora.peft-lora-alpha = 16
+model.lora.peft-lora-dropout = 0.075
+model.lora.peft-target-modules = "query,value"
 train.save-every-round = 5
 train.learning-rate-max = 5e-4
 train.learning-rate-min = 1e-5
@@ -59,6 +58,21 @@ train.training-arguments.lr-scheduler-type = "constant"
 strategy.fraction-train = 0.2
 strategy.fraction-evaluate = 0.0
 num-server-rounds = 15
-num-supernodes = 50
-wandb.project = "flowertune-tinybert-lora"
+wandb.project = "flowertune-tinybert"
 wandb.entity = "ilham-abdillah-alhamdi-universitas-indonesia"
+wandb.run-name = ""
+
+[tool.flwr.app.config.datasets.sst2]
+name = "glue"
+subset = "sst2"
+text_fields = "sentence"
+
+[tool.flwr.app.config.datasets.qnli]
+name = "glue"
+subset = "qnli"
+text_fields = "question,sentence"
+
+[tool.flwr.app.config.datasets.qqp]
+name = "glue"
+subset = "qqp"
+text_fields = "question1,question2"

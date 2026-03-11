@@ -10,13 +10,13 @@ from omegaconf import DictConfig
 from peft import get_peft_model_state_dict, set_peft_model_state_dict
 from transformers import TrainingArguments, Trainer
 
-from flowertune_tinybert_lora.dataset import (
+from flowertune_tinybert.dataset import (
     get_encoding_func_and_data_collator,
     load_data,
     compute_metrics,
 )
-from flowertune_tinybert_lora.utils import replace_keys
-from flowertune_tinybert_lora.models import cosine_annealing, get_model
+from flowertune_tinybert.utils import replace_keys
+from flowertune_tinybert.models import cosine_annealing, get_model
 
 # Avoid warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
@@ -34,15 +34,15 @@ def train(msg: Message, context: Context):
     # Parse config
     partition_id = context.node_config["partition-id"]
     num_partitions = context.node_config["num-partitions"]
-    num_rounds = context.run_config["num-server-rounds"]
     cfg = DictConfig(replace_keys(unflatten_dict(context.run_config)))
+    num_rounds = cfg.num_server_rounds
+    chosen_dataset = cfg.dataset
+    dataset_config = cfg.datasets[chosen_dataset]
     training_arguments = TrainingArguments(**cfg.train.training_arguments)
 
-    # Let's get the client partitionf
     encoding_func, data_collator = get_encoding_func_and_data_collator(
-        cfg.model.name)
-    train_set, _ = load_data(
-        partition_id, num_partitions, cfg.dataset.name, cfg.dataset.subset)
+        cfg.model.name, dataset_config)
+    train_set, _ = load_data(partition_id, num_partitions, dataset_config)
     train_set = train_set.map(encoding_func, batched=True)
 
     # Load the model and initialize it with the received weights

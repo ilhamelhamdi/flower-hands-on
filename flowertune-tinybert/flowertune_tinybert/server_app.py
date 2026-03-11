@@ -13,9 +13,9 @@ from omegaconf import DictConfig
 from transformers import TrainingArguments, Trainer
 from peft import get_peft_model_state_dict, set_peft_model_state_dict
 
-from flowertune_tinybert_lora.utils import replace_keys
-from flowertune_tinybert_lora.models import get_model
-from flowertune_tinybert_lora.dataset import get_encoding_func_and_data_collator, compute_metrics
+from flowertune_tinybert.utils import replace_keys
+from flowertune_tinybert.models import get_model
+from flowertune_tinybert.dataset import get_encoding_func_and_data_collator, compute_metrics
 
 # Create ServerApp
 app = ServerApp()
@@ -31,7 +31,6 @@ def main(grid: Grid, context: Context) -> None:
     os.makedirs(save_path, exist_ok=True)
 
     # Read from config
-    num_rounds = context.run_config["num-server-rounds"]
     cfg = DictConfig(replace_keys(unflatten_dict(context.run_config)))
 
     # Initialize Weights & Biases
@@ -55,7 +54,7 @@ def main(grid: Grid, context: Context) -> None:
         grid=grid,
         initial_arrays=arrays,
         train_config=ConfigRecord({"save_path": save_path}),
-        num_rounds=num_rounds,
+        num_rounds=cfg.num_server_rounds,
         evaluate_fn=get_evaluate_fn(
             cfg, val_set, data_collator, save_path
         ),
@@ -68,11 +67,14 @@ def get_validation_set_and_data_collator(cfg):
     """Load validation set for evaluation."""
     from datasets import load_dataset
 
+    chosen_dataset = cfg.dataset
+    dataset_config = cfg.datasets[chosen_dataset]
+
     raw_val_set = load_dataset(
-        cfg.dataset.name, cfg.dataset.subset, split="validation")
+        dataset_config.name, dataset_config.subset, split="validation")
     encoding_func, data_collator = get_encoding_func_and_data_collator(
-        cfg.model.name)
-    val_set = raw_val_set.map(encoding_func, batched=True, num_proc=8)
+        cfg.model.name, dataset_config)
+    val_set = raw_val_set.map(encoding_func, batched=True)
     return val_set, data_collator
 
 
@@ -127,8 +129,13 @@ def get_evaluate_fn(cfg, validation_set, data_collator, save_path):
 
 def initialize_wandb(cfg):
     """Initialize Weights & Biases for experiment tracking."""
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    task_name = cfg.dataset
+    run_name = f"{task_name}-{timestamp}{('-' + cfg.wandb.run_name) if cfg.wandb.run_name else ''}"
+
     return wandb.init(
         project=cfg.wandb.project,
         entity=cfg.wandb.entity,
         config=cfg,
+        name=run_name,
     )

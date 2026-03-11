@@ -3,23 +3,25 @@ from flwr_datasets.partitioner import IidPartitioner
 from transformers import AutoTokenizer, DataCollatorWithPadding
 import evaluate
 import numpy as np
+from omegaconf import DictConfig
 
 FDS = None  # Cache FederatedDataset
 
 
-def encoding_func(examples, tokenizer):
-    # Encoding for QNLI
-    return tokenizer(examples["question"], examples["sentence"], truncation=True, max_length=512)
+def encoding_func(dataset_config, examples, tokenizer):
+    text_fields = dataset_config["text_fields"].split(",")
+    inputs = [examples[field] for field in text_fields]
+    return tokenizer(*inputs, truncation=True, max_length=512) # TinyBERT token max length is 512
 
 
-def get_encoding_func_and_data_collator(model_name: str):
+def get_encoding_func_and_data_collator(model_name: str, dataset_config: DictConfig):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-    def enc(examples): return encoding_func(examples, tokenizer)
+    def enc(examples): return encoding_func(dataset_config, examples, tokenizer)
     return enc, data_collator
 
 
-def load_data(partition_id: int, num_partitions: int, dataset_name: str, dataset_subset: str = None):
+def load_data(partition_id: int, num_partitions: int, dataset_config: DictConfig):
     """Load partition data."""
     # Only initialize `FederatedDataset` once
     global FDS
@@ -28,8 +30,8 @@ def load_data(partition_id: int, num_partitions: int, dataset_name: str, dataset
         train_partitioner = IidPartitioner(num_partitions=num_partitions)
         val_partitioner = IidPartitioner(num_partitions=num_partitions)
         FDS = FederatedDataset(
-            dataset=dataset_name,
-            subset=dataset_subset,
+            dataset=dataset_config.name,
+            subset=dataset_config.subset,
             partitioners={"train": train_partitioner, "validation": val_partitioner},
         )
     client_train_set = FDS.load_partition(partition_id, "train")
