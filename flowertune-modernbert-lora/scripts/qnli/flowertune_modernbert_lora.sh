@@ -40,6 +40,8 @@ singularity exec --nv \
         chmod +x ./setup-env.sh && ./setup-env.sh && \
         
         source .venv/bin/activate && \
+
+        echo "Starting training..." && \
         flwr run . \
             --run-config 'dataset="qnli"' \
             --run-config 'wandb.run-name="dgx-run"'
