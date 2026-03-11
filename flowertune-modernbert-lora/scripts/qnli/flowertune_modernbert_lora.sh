@@ -41,5 +41,5 @@ singularity exec --nv \
         
         source .venv/bin/activate && \
 
-        flwr run . --run-config \"dataset='qnli' wandb.run-name='dgx-run'\"
+        flwr run . --non-interactive --log-level DEBUG --run-config \"dataset='qnli' wandb.run-name='dgx-run'\"
     "
