@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:2.10.0-cuda13.0-cudnn9-runtime
+FROM python:3.12.4
 
 # Set environment variables for non-interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
