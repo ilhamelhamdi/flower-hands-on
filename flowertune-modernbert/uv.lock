@@ -571,7 +571,7 @@ wheels = [
 ]
 
 [[package]]
-name = "flowertune-modernbert-lora"
+name = "flowertune-modernbert"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [

@@ -13,9 +13,9 @@ from omegaconf import DictConfig
 from transformers import TrainingArguments, Trainer
 from peft import get_peft_model_state_dict, set_peft_model_state_dict
 
-from flowertune_modernbert_lora.utils import replace_keys
-from flowertune_modernbert_lora.models import get_model
-from flowertune_modernbert_lora.dataset import get_encoding_func_and_data_collator, compute_metrics
+from flowertune_modernbert.utils import replace_keys
+from flowertune_modernbert.models import get_model
+from flowertune_modernbert.dataset import get_encoding_func_and_data_collator, compute_metrics
 
 # Create ServerApp
 app = ServerApp()

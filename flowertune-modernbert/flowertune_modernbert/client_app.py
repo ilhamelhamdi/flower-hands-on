@@ -10,13 +10,13 @@ from omegaconf import DictConfig
 from peft import get_peft_model_state_dict, set_peft_model_state_dict
 from transformers import TrainingArguments, Trainer
 
-from flowertune_modernbert_lora.dataset import (
+from flowertune_modernbert.dataset import (
     get_encoding_func_and_data_collator,
     load_data,
     compute_metrics,
 )
-from flowertune_modernbert_lora.utils import replace_keys
-from flowertune_modernbert_lora.models import cosine_annealing, get_model
+from flowertune_modernbert.utils import replace_keys
+from flowertune_modernbert.models import cosine_annealing, get_model
 
 # Avoid warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
