@@ -47,7 +47,7 @@ singularity exec --nv \
 
         source .venv/bin/activate && \
         flwr config list && \
-        flwr run . --stream --run-config \"dataset='$DATASET' wandb.run-name='dgx-run'\"
+        flwr run . --log-level DEBUG --stream --run-config \"dataset='$DATASET' wandb.run-name='dgx-run'\"
     "
 
 echo "Stopping Singularity instance..."
