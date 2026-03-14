@@ -33,26 +33,26 @@ def get_model(model_cfg: DictConfig):
     """
 
     quantization = model_cfg.get("quantization", None)
-    if quantization is None:
-        quantization_config = None
-    elif quantization == 4:
-        quantization_config = BitsAndBytesConfig(load_in_4bit=True)
-    elif quantization == 8:
-        quantization_config = BitsAndBytesConfig(load_in_8bit=True)
-    else:
-        raise ValueError(
-            f"Use 4-bit or 8-bit quantization. You passed: {quantization}/"
-        )
+    # if quantization is None:
+    quantization_config = None
+    # elif quantization == 4:
+    #     quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    # elif quantization == 8:
+    #     quantization_config = BitsAndBytesConfig(load_in_8bit=True)
+    # else:
+    #     raise ValueError(
+    #         f"Use 4-bit or 8-bit quantization. You passed: {quantization}/"
+    #     )
 
     model = AutoModelForSequenceClassification.from_pretrained(
         model_cfg.name,
         quantization_config=quantization_config,
-        torch_dtype=torch.float32,
+        torch_dtype=torch.bfloat16 if quantization_config is None else torch.float32,
     )
 
-    model = prepare_model_for_kbit_training(
-        model, use_gradient_checkpointing=model_cfg.gradient_checkpointing
-    )
+    # model = prepare_model_for_kbit_training(
+    #     model, use_gradient_checkpointing=model_cfg.gradient_checkpointing
+    # )
 
     lora_target_modules = model_cfg.lora.peft_target_modules.split(",")
     peft_config = LoraConfig(
