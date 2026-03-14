@@ -31,6 +31,7 @@ singularity exec --nv \
     --cwd /root \
     instance://$INSTANCE_NAME \
     bash -c "
+        ls -al && \
         chmod +x ./setup-env.sh && ./setup-env.sh && \
 
         flwr config list
