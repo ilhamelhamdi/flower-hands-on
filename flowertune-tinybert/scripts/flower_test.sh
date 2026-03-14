@@ -23,6 +23,7 @@ mkdir -p results/logs
 
 singularity instance start --nv \
     --env-file .env \
+    --bind ${PROJECT_ROOT}:/root \
     $SIF_PATH \
     $INSTANCE_NAME
 
