@@ -3,6 +3,8 @@
 #SBATCH --output=results/logs/%j/out.txt
 #SBATCH --error=results/logs/%j/err.txt
 #SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
 #SBATCH --qos=1gpu
 #SBATCH --partition=dgx-a100
 #SBATCH --gpus=1
