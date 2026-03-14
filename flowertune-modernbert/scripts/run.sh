@@ -38,6 +38,7 @@ singularity instance start --nv \
 
 singularity exec --nv \
     --cwd /root \
+    --env-file .env \
     instance://$INSTANCE_NAME \
     bash -c "
         chmod +x $SETUP_ENV_SCRIPT && $SETUP_ENV_SCRIPT && \
