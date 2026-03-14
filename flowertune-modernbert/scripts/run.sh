@@ -24,6 +24,9 @@ INSTANCE_NAME=flowertune-modernbert-${DATASET}
 PROJECT_ROOT=$(pwd)
 SETUP_ENV_SCRIPT=${PROJECT_ROOT}/scripts/setup-env.sh
 
+export SINGULARITYENV_FLWR_HOME=${PROJECT_ROOT}/.flwr
+export SINGULARITYENV_HF_HOME=${PROJECT_ROOT}/.cache/huggingface
+export SINGULARITYENV_WANDB_CACHE_DIR=${PROJECT_ROOT}/.cache/wandb
 
 # Set environment variables for Singularity to use the local Python user base
 export SINGULARITYENV_PYTHONUSERBASE=${PROJECT_ROOT}/.local
