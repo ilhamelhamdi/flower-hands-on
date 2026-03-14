@@ -168,3 +168,6 @@ wandb/
 
 # Model checkpoints
 results/
+
+# Local environment files
+.local
