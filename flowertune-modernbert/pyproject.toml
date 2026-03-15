@@ -37,8 +37,6 @@ clientapp = "flowertune_modernbert.client_app:app"
 [tool.flwr.app.config]
 dataset = "sst2" # Default dataset, can be overridden in CLI
 model.name = "answerdotai/ModernBERT-base"
-# model.quantization = 8
-model.gradient-checkpointing = false
 model.lora.peft-lora-r = 8
 model.lora.peft-lora-alpha = 16
 model.lora.peft-lora-dropout = 0.075
@@ -60,6 +58,7 @@ train.training-arguments.gradient-checkpointing = false
 train.training-arguments.lr-scheduler-type = "constant"
 strategy.fraction-train = 0.2
 strategy.fraction-evaluate = 0.0
+eval.batch-size = 32
 num-server-rounds = 15
 wandb.project = "flowertune-modernbert"
 wandb.entity = "ilham-abdillah-alhamdi-universitas-indonesia"
