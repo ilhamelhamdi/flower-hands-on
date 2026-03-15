@@ -4,7 +4,7 @@
 #SBATCH --error=results/logs/%j/err.txt
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=40G
+#SBATCH --mem=64G
 #SBATCH --qos=1gpu
 #SBATCH --partition=dgx-a100
 #SBATCH --gpus=1
