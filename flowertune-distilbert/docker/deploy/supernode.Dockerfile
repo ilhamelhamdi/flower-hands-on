@@ -1,4 +1,4 @@
-FROM flwr/supernode:1.27.0-py3.13-ubuntu24.04 AS builder
+FROM flwr/supernode:1.27.0-py3.12-ubuntu24.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-install-project
 
 
-FROM flwr/supernode:1.27.0-py3.13-ubuntu24.04
+FROM flwr/supernode:1.27.0-py3.12-ubuntu24.04
 
 ENV PYTHONUNBUFFERED=1
 
