@@ -25,7 +25,7 @@ services:
     command:
       - --insecure
       - --superlink
-      - 0.0.0.0:9092
+      - superlink:9092
       - --clientappio-api-address
       - 0.0.0.0:9094
       - --isolation
@@ -51,7 +51,7 @@ services:
     command:
       - --insecure
       - --superlink
-      - 0.0.0.0:9092
+      - superlink:9092
       - --clientappio-api-address
       - 0.0.0.0:9095
       - --isolation
