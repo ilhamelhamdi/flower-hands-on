@@ -1,20 +1,19 @@
-echo "Setting up the environment..."
-echo "Installing uv..."
-pip install --user uv --break-system-packages
+#!/bin/bash
+echo "Setting up the environment using a container..."
 
-if [ -d ".venv" ]; then
-    rm -rf .venv
-fi
+# Use the same image as your services for consistency
+IMAGE="flwr/superlink:1.27.0-py3.13-ubuntu24.04"
 
-echo "Creating virtual environment..."
-uv venv .venv
-
-echo "Activating virtual environment..."
-source .venv/bin/activate
-
-echo "Installing dependencies (excluding flwr[simulation])..."
-sed 's/.*flwr\[simulation\].*//' pyproject.toml | uv pip install --break-system-packages -r -
-# uv pip install -e .
+# Run the setup inside a container
+# -v $(pwd):/app mounts your project
+# -w /app sets the working directory
+docker run --rm -v $(pwd):/app -w /app $IMAGE bash -c "
+    pip install uv && \
+    if [ -d '.venv' ]; then rm -rf .venv; fi && \
+    uv venv .venv && \
+    source .venv/bin/activate && \
+    sed 's/.*flwr\[simulation\].*//' pyproject.toml | uv pip install -r -
+"
 
 echo "Environment setup complete."
 
