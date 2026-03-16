@@ -8,6 +8,8 @@ services:
       - --insecure
       - --isolation
       - subprocess
+    volumes:
+      - ${PROJECT_DIR:-.}/.venv:/app/.venv:ro
     ports:
       - 9091:9091
       - 9092:9092
@@ -30,6 +32,8 @@ services:
       - subprocess
       - --node-config
       - "partition-id=0 num-partitions=2"
+    volumes:
+      - ${PROJECT_DIR:-.}/.venv:/app/.venv:ro
     deploy:
       resources:
         limits:
@@ -52,6 +56,8 @@ services:
       - subprocess
       - --node-config
       - "partition-id=1 num-partitions=2"
+    volumes:
+      - ${PROJECT_DIR:-.}/.venv:/app/.venv:ro
     deploy:
       resources:
         limits:
