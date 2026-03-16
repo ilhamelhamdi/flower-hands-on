@@ -34,6 +34,8 @@ services:
       - "partition-id=0 num-partitions=2"
     volumes:
       - ${PROJECT_DIR:-.}/.venv:/app/.venv:ro
+    ports:
+      - 9094:9094
     deploy:
       resources:
         limits:
@@ -58,6 +60,8 @@ services:
       - "partition-id=1 num-partitions=2"
     volumes:
       - ${PROJECT_DIR:-.}/.venv:/app/.venv:ro
+    ports:
+      - 9095:9095
     deploy:
       resources:
         limits:
