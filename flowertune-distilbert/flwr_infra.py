@@ -18,6 +18,7 @@ SUPERLINK_PORTS = {
     "fleet": 54002,
     "control": 54003
 }
+SUPERLINK_CPUS = 8
 SUPERNODE_PORT_START = 54100  # Starting port for Supernodes (clientappio API)
 
 # Ensure logs directory exists
@@ -48,7 +49,10 @@ def start_instances():
 
     sl_log = open(f"{LOG_DIR}/superlink.log", "w")
     subprocess.Popen([
-        "apptainer", "exec", "instance://superlink",
+        "apptainer", "exec",
+        "--env", f"OMP_NUM_THREADS={int(SUPERLINK_CPUS)}",
+        "--env", f"MKL_NUM_THREADS={int(SUPERLINK_CPUS)}",
+        "instance://superlink",
         "flower-superlink", "--insecure", "--isolation", "subprocess",
         "--serverappio-api-address", f"0.0.0.0:{SUPERLINK_PORTS['serverappio']}",
         "--fleet-api-address", f"0.0.0.0:{SUPERLINK_PORTS['fleet']}",
