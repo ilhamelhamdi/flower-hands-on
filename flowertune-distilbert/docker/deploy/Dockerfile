@@ -17,7 +17,8 @@ COPY pyproject.toml uv.lock ./
 # --mount=type=cache,target=/root/.cache/uv to speed up subsequent builds by caching the downloaded packages
 RUN --mount=type=cache,target=/root/.cache/uv \
     sed -i 's/\[simulation\]//' pyproject.toml && \
+    sed -i '/"torch==/d' pyproject.toml && \
     uv pip install --system --break-system-packages --no-cache-dir \
-    -r pyproject.toml --excludes torch
+    -r pyproject.toml
 
 ENTRYPOINT ["flower-superlink"]
