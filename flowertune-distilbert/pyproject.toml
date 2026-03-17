@@ -18,7 +18,7 @@ dependencies = [
     "transformers==4.53.0",
     "sentencepiece==0.2.1",
     "omegaconf==2.3.0",
-    "hf_transfer==0.1.8",
+    "hf_transfer==0.1.9",
     "evaluate>=0.4.6",
     "scikit-learn>=1.8.0",
     "wandb>=0.25.0",
