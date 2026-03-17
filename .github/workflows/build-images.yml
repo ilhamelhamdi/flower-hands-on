@@ -28,7 +28,7 @@ jobs:
       - name: Build and Push SuperNode
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./flowertune-distilbert
           # Using the Dockerfile path from your uploaded files
           file: ./flowertune-distilbert/docker/deploy/supernode.Dockerfile
           push: true
@@ -40,7 +40,7 @@ jobs:
       - name: Build and Push SuperLink
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./flowertune-distilbert
           file: ./flowertune-distilbert/docker/deploy/superlink.Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/flwr-superlink:${{ github.event.inputs.tag }}
