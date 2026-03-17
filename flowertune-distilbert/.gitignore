@@ -171,3 +171,6 @@ results/
 
 # Local environment files
 .local
+
+# Apptainer flwr.sif image
+flwr.sif
