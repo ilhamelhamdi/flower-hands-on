@@ -18,6 +18,6 @@ COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     sed -i 's/\[simulation\]//' pyproject.toml && \
     uv pip install --system --break-system-packages --no-cache-dir \
-    -r pyproject.toml --exclude torch
+    -r pyproject.toml --excludes torch
 
 ENTRYPOINT ["flower-superlink"]
