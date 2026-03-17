@@ -7,7 +7,7 @@ on:
       tag:
         description: 'Image tag'
         required: true
-        default: '0.0.1-distilbert'
+        default: 'latest'
 
 jobs:
   build-and-push:
@@ -25,24 +25,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push SuperNode
+      - name: Build and Push Unified flwr Image
         uses: docker/build-push-action@v5
         with:
           context: ./flowertune-distilbert
-          # Using the Dockerfile path from your uploaded files
-          file: ./flowertune-distilbert/docker/deploy/supernode.Dockerfile
+          file: ./flowertune-distilbert/docker/deploy/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/flwr-supernode:${{ github.event.inputs.tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/flwr:${{ github.event.inputs.tag }}
           # Enables GitHub's internal build cache for faster subsequent runs
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and Push SuperLink
-        uses: docker/build-push-action@v5
-        with:
-          context: ./flowertune-distilbert
-          file: ./flowertune-distilbert/docker/deploy/superlink.Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/flwr-superlink:${{ github.event.inputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
