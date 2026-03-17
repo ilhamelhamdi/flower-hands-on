@@ -3,12 +3,14 @@ import time
 import os
 import sys
 import logging
+import tomllib
 
-# Heterogeneous Client Configuration
-client_groups = [
-    (1, 4),   # 1 node with 4 CPUs
-    (2, 2),   # 2 nodes with 2 CPUs
-    (1, 1),   # 1 node with 1 CPU
+# (count, cpus) tuples defining client groups.
+DEFAULT_CLIENT_GROUPS = [
+    (1, 8),
+    (1, 4),
+    (1, 2),
+    (1, 1),
 ]
 
 # Configuration
@@ -18,8 +20,8 @@ SUPERLINK_PORTS = {
     "fleet": 54002,
     "control": 54003
 }
-SUPERLINK_CPUS = 8
 SUPERNODE_PORT_START = 54100  # Starting port for Supernodes (clientappio API)
+CLIENT_GROUPS_CONFIG = "client_groups.toml"
 
 # Ensure logs directory exists
 LOG_DIR = "logs"
@@ -33,6 +35,49 @@ def configure_logging(log_level: str = "INFO"):
         level=getattr(logging, log_level.upper(), logging.INFO),
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     )
+
+
+def load_client_groups(config_path: str):
+    if not os.path.exists(config_path):
+        logger.info(
+            "Client group config '%s' not found, using defaults",
+            config_path,
+        )
+        return DEFAULT_CLIENT_GROUPS
+
+    try:
+        with open(config_path, "rb") as config_file:
+            data = tomllib.load(config_file)
+    except (OSError, tomllib.TOMLDecodeError) as exc:
+        logger.error("Failed to read '%s': %s", config_path, exc)
+        logger.info("Falling back to default client groups")
+        return DEFAULT_CLIENT_GROUPS
+
+    raw_groups = data.get("client_groups", [])
+    parsed_groups = []
+
+    for index, group in enumerate(raw_groups):
+        count = group.get("count")
+        cpus = group.get("cpus")
+
+        if not isinstance(count, int) or count < 1:
+            logger.error("Invalid count in client_groups[%s]: %r", index, count)
+            continue
+
+        if not isinstance(cpus, int) or cpus < 1:
+            logger.error("Invalid cpus in client_groups[%s]: %r", index, cpus)
+            continue
+
+        parsed_groups.append((count, cpus))
+
+    if not parsed_groups:
+        logger.error("No valid client_groups found in '%s'", config_path)
+        logger.info("Falling back to default client groups")
+        return DEFAULT_CLIENT_GROUPS
+
+    logger.info("Loaded %s client group entries from '%s'", len(parsed_groups), config_path)
+    logger.debug("Resolved client groups: %s", parsed_groups)
+    return parsed_groups
 
 
 def start_instances():
@@ -49,10 +94,7 @@ def start_instances():
 
     sl_log = open(f"{LOG_DIR}/superlink.log", "w")
     subprocess.Popen([
-        "apptainer", "exec",
-        "--env", f"OMP_NUM_THREADS={int(SUPERLINK_CPUS)}",
-        "--env", f"MKL_NUM_THREADS={int(SUPERLINK_CPUS)}",
-        "instance://superlink",
+        "apptainer", "exec", "instance://superlink",
         "flower-superlink", "--insecure", "--isolation", "subprocess",
         "--serverappio-api-address", f"0.0.0.0:{SUPERLINK_PORTS['serverappio']}",
         "--fleet-api-address", f"0.0.0.0:{SUPERLINK_PORTS['fleet']}",
@@ -64,6 +106,7 @@ def start_instances():
     time.sleep(5)
 
     # 2. Start Heterogeneous Supernodes
+    client_groups = load_client_groups(CLIENT_GROUPS_CONFIG)
     node_id = 0
     total_nodes = sum(count for count, _ in client_groups)
     num_cores = os.cpu_count()
@@ -139,7 +182,7 @@ if __name__ == "__main__":
     configure_logging(os.getenv("LOG_LEVEL", "INFO"))
 
     if len(sys.argv) < 2:
-        logger.error("Usage: python flwr_infra.py [start|stop]")
+        logger.error("Usage: python run_fl.py [start|stop]")
         sys.exit(1)
 
     action = sys.argv[1].lower()

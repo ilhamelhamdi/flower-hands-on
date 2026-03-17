@@ -1,0 +1,14 @@
+# Define heterogeneous supernode groups.
+# Each entry means: spawn `count` nodes, each using `cpus` CPU threads.
+
+[[client_groups]]
+count = 5
+cpus = 4
+
+[[client_groups]]
+count = 10
+cpus = 2
+
+[[client_groups]]
+count = 20
+cpus = 1
