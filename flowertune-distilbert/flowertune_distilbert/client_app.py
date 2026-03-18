@@ -2,6 +2,7 @@
 
 import os
 import warnings
+import time
 
 from flwr.app import ArrayRecord, Context, Message, MetricRecord, RecordDict
 from flwr.clientapp import ClientApp
@@ -10,13 +11,13 @@ from omegaconf import DictConfig
 from peft import get_peft_model_state_dict, set_peft_model_state_dict
 from transformers import TrainingArguments, Trainer
 
-from flowertune_distilbert.dataset import (
+from .dataset import (
     get_encoding_func_and_data_collator,
     load_data,
     compute_metrics,
 )
-from flowertune_distilbert.utils import replace_keys
-from flowertune_distilbert.models import cosine_annealing, get_model
+from .utils import replace_keys
+from .models import cosine_annealing, get_model
 
 # Avoid warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
@@ -70,13 +71,17 @@ def train(msg: Message, context: Context):
     )
 
     # Do local training
+    start_time = time.time()
     results = trainer.train()
+    duration = time.time() - start_time
 
     # Construct and return reply Message
     model_record = ArrayRecord(get_peft_model_state_dict(model))
     metrics = {
         "train_loss": results.training_loss,
         "num-examples": len(train_set),
+        "duration": duration,
+        "node_id": partition_id,
     }
     metric_record = MetricRecord(metrics)
     content = RecordDict({"arrays": model_record, "metrics": metric_record})

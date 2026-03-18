@@ -13,9 +13,10 @@ from omegaconf import DictConfig
 from transformers import TrainingArguments, Trainer
 from peft import get_peft_model_state_dict, set_peft_model_state_dict
 
-from flowertune_distilbert.utils import replace_keys
-from flowertune_distilbert.models import get_model
-from flowertune_distilbert.dataset import get_encoding_func_and_data_collator, compute_metrics
+from .utils import replace_keys
+from .models import get_model
+from .dataset import get_encoding_func_and_data_collator, compute_metrics
+from .strategy import CustomStrategy
 
 # Create ServerApp
 app = ServerApp()
@@ -44,7 +45,7 @@ def main(grid: Grid, context: Context) -> None:
     val_set, data_collator = get_validation_set_and_data_collator(cfg)
 
     # Define strategy
-    strategy = FedAvg(
+    strategy = CustomStrategy(
         fraction_train=cfg.strategy.fraction_train,
         fraction_evaluate=cfg.strategy.fraction_evaluate,
     )
