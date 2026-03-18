@@ -3,10 +3,14 @@
 
 [[client_groups]]
 count = 5
-cpus = 4
+cpus = 8
 
 [[client_groups]]
 count = 10
+cpus = 4
+
+[[client_groups]]
+count = 15
 cpus = 2
 
 [[client_groups]]

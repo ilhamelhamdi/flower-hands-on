@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 import tomllib
+import threading
 
 # (count, cpus) tuples defining client groups.
 DEFAULT_CLIENT_GROUPS = [
@@ -80,7 +81,7 @@ def load_client_groups(config_path: str):
     return parsed_groups
 
 
-def start_instances():
+def up_instances():
     """Spawns the Superlink and the heterogeneous Supernodes."""
     if not os.path.exists(SIF_FILE):
         logger.error("%s not found. Run 'apptainer pull' first.", SIF_FILE)
@@ -92,14 +93,24 @@ def start_instances():
     subprocess.run(["apptainer", "instance", "start",
                    SIF_FILE, "superlink"], check=False)
 
-    sl_log = open(f"{LOG_DIR}/superlink.log", "w")
-    subprocess.Popen([
-        "apptainer", "exec", "instance://superlink",
+    proc = subprocess.Popen([
+        "apptainer", "exec", 
+        "instance://superlink",
         "flower-superlink", "--insecure", "--isolation", "subprocess",
         "--serverappio-api-address", f"0.0.0.0:{SUPERLINK_PORTS['serverappio']}",
         "--fleet-api-address", f"0.0.0.0:{SUPERLINK_PORTS['fleet']}",
         "--control-api-address", f"0.0.0.0:{SUPERLINK_PORTS['control']}"
-    ], stdout=sl_log, stderr=sl_log, start_new_session=True)
+    ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, start_new_session=True)
+
+    # Filter out "Fleet.PullMessages" logs to reduce noise in superlink.log
+    def filter_and_write():
+        with open(f"{LOG_DIR}/superlink.log", "w") as f:
+            for line in iter(proc.stdout.readline, ""):
+                if "Fleet.PullMessages" not in line:
+                    f.write(line)
+                    f.flush()
+
+    threading.Thread(target=filter_and_write, daemon=True).start()
     logger.debug("Superlink process started")
 
     # Wait for Link to bind ports 9091-9093
@@ -109,32 +120,18 @@ def start_instances():
     client_groups = load_client_groups(CLIENT_GROUPS_CONFIG)
     node_id = 0
     total_nodes = sum(count for count, _ in client_groups)
-    num_cores = os.cpu_count()
-    current_core_ptr = 0  # Tracks the next available core for allocation
-    if not num_cores:
-        num_cores = 1
-        logger.debug("os.cpu_count() returned None. Falling back to 1 core.")
 
     logger.info("Spawning %s heterogeneous supernodes", total_nodes)
 
     for count, cpus in client_groups:
-        cores_to_allocate = max(1, int(cpus))
         for _ in range(count):
-            instance_name = f"node-{node_id}"
+            instance_name = f"supernode-{node_id}"
             port = SUPERNODE_PORT_START + node_id
 
-            # Create a list of cores for this specific node
-            assigned_cores = []
-            for i in range(cores_to_allocate):
-                assigned_cores.append(str((current_core_ptr + i) % num_cores))
-            core_mask = ",".join(assigned_cores)  # e.g., "0,1,2,3"
-            current_core_ptr = (current_core_ptr +
-                                cores_to_allocate) % num_cores
             logger.debug(
-                "Node %s config: cpus=%s, core_mask=%s, port=%s",
+                "Node %s config: cpus=%s, port=%s",
                 node_id,
                 cpus,
-                core_mask,
                 port,
             )
 
@@ -144,7 +141,6 @@ def start_instances():
 
             node_log = open(f"{LOG_DIR}/{instance_name}.log", "w")
             exec_cmd = [
-                "taskset", "-c", core_mask,
                 "apptainer", "exec",
                 "--env", f"OMP_NUM_THREADS={int(cpus)}",
                 "--env", f"MKL_NUM_THREADS={int(cpus)}",
@@ -158,15 +154,15 @@ def start_instances():
 
             subprocess.Popen(exec_cmd, stdout=node_log,
                              stderr=node_log, start_new_session=True)
-            logger.info("Started %s on port %s (cores: %s)",
-                        instance_name, port, core_mask)
+            logger.info("Started %s on port %s (Virtual CPU(s)): %s)",
+                        instance_name, port, cpus)
             node_id += 1
 
     logger.info("Current Apptainer instance status:")
     subprocess.run(["apptainer", "instance", "list"], check=False)
 
 
-def stop_instances():
+def down_instances():
     """Stops all running Apptainer instances on this host."""
     logger.info("Stopping all Flower instances")
     # Stopping all is the safest way to ensure no orphaned nodes remain
@@ -177,18 +173,27 @@ def stop_instances():
     else:
         logger.error("No active instances found or error during shutdown")
 
+def start_flower_task(command: list[str]):
+    """Starts the Flower task."""
+    file_log_name = f"{LOG_DIR}/flower-task.log"
+    task_log = open(file_log_name, "w")
+    logger.info("Starting Flower task with command: %s", " ".join(command))
+    subprocess.Popen(command, stdout=task_log, stderr=task_log, start_new_session=True)
+    logger.info("Flower has been started. Check %s for output.", file_log_name)
 
 if __name__ == "__main__":
     configure_logging(os.getenv("LOG_LEVEL", "INFO"))
 
     if len(sys.argv) < 2:
-        logger.error("Usage: python run_fl.py [start|stop]")
+        logger.error("Usage: python run_fl.py [up|down]")
         sys.exit(1)
 
     action = sys.argv[1].lower()
-    if action == "start":
-        start_instances()
-    elif action == "stop":
-        stop_instances()
+    if action == "up":
+        up_instances()
+    elif action == "down":
+        down_instances()
+    elif action == "start":
+        start_flower_task(sys.argv[2:])
     else:
-        logger.error("Unknown action: %s. Use 'start' or 'stop'.", action)
+        logger.error("Unknown action: %s. Use 'up' or 'down'.", action)
